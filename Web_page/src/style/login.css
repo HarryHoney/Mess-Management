@@ -1,0 +1,35 @@
+.form{
+    margin-bottom: 10px;
+}
+
+button{
+    margin-top: 15px;
+    width: 40%;
+    height: 40px;
+    font-size: 15px;
+    border: solid #c5c6c7;
+    border-radius: 10px;
+    background-color: #45A29E ;
+    color: #0b0c10;
+    font-weight: bold;
+}
+
+.form_input{
+    display: flex;
+    flex-direction: left;
+    justify-content: space-between;
+    vertical-align: center;
+}
+.form_input input{
+    height: 20px;
+    margin-top: 15px;
+    margin-left: 5px;
+    padding: 5px;
+    background-color: #c5c6c7;
+    color: #1f2833;
+    font-weight: bold;
+    font-size : 15px;
+}
+.from_input h3{
+    vertical-align: center;
+}
