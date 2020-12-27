@@ -1,0 +1,55 @@
+To connect to MongoDb db: see the video below:
+https://www.youtube.com/watch?v=Qn0SOL8vK8w
+
+Schema:
+MongoDb doesn't enforce any Schema on your by default. 
+But you can specify it anyhow on mongoDB.
+
+Schema can also be seen as a class for OOPs people.
+A document schema is a JSON object that allows you to define the shape and content of documents and embedded documents in a collection.
+
+Model:
+Models are fancy constructors compiled from Schema definitions. An instance of a model is called a document. 
+Models are responsible for creating and reading documents from the underlying MongoDB database.
+
+To use our schema definition, we need to convert our Schema into a Model we can work with. 
+This is equilent to making object out of class.
+To do so, we pass it into mongoose.model(modelName, schema)
+
+When you call mongoose.model() on a schema, Mongoose compiles a model for you.
+For example:
+const schema = new mongoose.Schema({ name: 'string', size: 'string' });
+const Tank = mongoose.model('Tank', schema);
+The first argument is the singular name of the collection your model is for. 
+Mongoose automatically looks for the plural, lowercased version of your model name. 
+Thus, for the example above, the model Tank is for the tanks collection in the database.
+
+Instance Methods:
+Instances of Models are documents. Documents have many of their own built-in instance methods. We may also define our own custom document instance methods.
+
+  // define a schema
+  const animalSchema = new Schema({ name: String, type: String });
+
+  // assign a function to the "methods" object of our animalSchema
+  animalSchema.methods.findSimilarTypes = function(cb) {
+    return mongoose.model('Animal').find({ type: this.type }, cb);
+  };
+Now all of our animal instances have a findSimilarTypes method available to them.
+
+  const Animal = mongoose.model('Animal', animalSchema);
+  const dog = new Animal({ type: 'dog' });
+
+  dog.findSimilarTypes((err, dogs) => {
+    console.log(dogs); // woof
+  });
+
+Statics:
+You can also add static functions to your model. There are two equivalent ways to add a static:
+
+Add a function property to schema.statics
+Call the Schema#static() function
+
+UserModel.find().lean().exec(function (err, users) {
+    return res.end(JSON.stringify(users));
+}
+Documents returned from queries with the lean option enabled are plain javascript objects, not Mongoose Documents.
