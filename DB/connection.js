@@ -6,7 +6,9 @@ const URI = 'mongodb+srv://messUser:messPassword@cluster0.flpbe.mongodb.net/mess
 //Local
 const URI_Local = 'mongodb://localhost:27017/messData'
 const connectDB = async ()=>{
-    const res = await mongoose.connect(URI || URI_Local,{
+    const res = await mongoose.connect(
+        // URI || 
+        URI_Local,{
         useUnifiedTopology: true,
         useNewUrlParser: true
     })

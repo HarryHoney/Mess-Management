@@ -9,7 +9,7 @@ const savingData = async (data)=>{
     .rotate()
     .resize(200)
     .toBuffer()
-    data.photo_url = buffer
+    data.photo_buffer = buffer
     const user = new Student(data)
     console.log(user)
     const res = await user.save()
@@ -21,14 +21,13 @@ const features1 ={
     email:'money@gmail.com',
     roll_number:17103034,
     room_number:209,
-    photo_url:'kdsgfhksljsd',
     balance: 23000,
     password:'honeymoney'
 }
 
-// savingData(features1).catch((err)=>{
-//     console.log(err)
-// })
+savingData(features1).catch((err)=>{
+    console.log(err)
+})
 const retrive = async ()=>{
     let ss = await connectDB()
     const data = await Student.findById('5fe9bbff9cdc69655d07263c')

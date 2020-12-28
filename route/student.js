@@ -1,42 +1,38 @@
 const express = require('express')
 const Student = require('../DB/models/student')
 const sharp = require('sharp')
-const {sendwecomeEmail}=require('../emails/account')
+const mailer = require('../emails/account')
 const router = new express.Router()
-const multer = require('multer')
+const {getBuffer} = require('../utils/photoBuffer')
 
-//here using multer I am fixing the kind of file i want the user to upload.
-const avatar = multer({
-    limits:{
-        fileSize : 4000000//fixing the maximum size of the photo to 4 Mb.
-    },
-    fileFilter(req,file,callback){
-        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-            callback(new Error('The file format is not correct!'))
-        }
-        callback(undefined,true)
-    }
-})
-
-router.post('/users', async (req, res) => {
-    const user = new User(req.body)
+//this function is complete only mailer is need to be added
+router.post('/add_new_student', async (req, res) => {
+    const data = req.body
+    console.log(data)
     try {
+        if(data.photo_buffer != null)
+        {
+            //ashu will make sure that the user will select image file only
+            buffer = await getBuffer(data.photo_buffer)
+            data.photo_buffer = buffer
+        }
+        const student = new Student(data)
+        console.log(student)
+        await student.save()
+        // mailer.sendwecomeEmail(data.email,data.name)
         
-        sendwecomeEmail(user.email,user.name)
-        await user.save()
-        //console.log(user.email)
-        const token = await user.generateAuthToken()
-        res.status(201).send({user,token})
+        res.status(201).send(student)
     } catch (e) {
+        console.log(e)
         res.status(400).send(e)
     }
 })
 
-router.get('/users/me', auth,async (req, res) => {
+router.get('/students/me',async (req, res) => {
     res.send(req.user)
 })
 
-router.patch('/users/me',auth ,async (req, res) => {
+router.patch('/users/me' ,async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'email', 'password', 'age']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -57,7 +53,7 @@ router.patch('/users/me',auth ,async (req, res) => {
     }
 })
 
-router.delete('/users/me',auth, async (req, res) => {
+router.delete('/users/me', async (req, res) => {
     try {
         await req.user.remove()
         res.send(req.user)
@@ -76,7 +72,7 @@ router.post('/users/login',async (req,res)=>{
     }
 })
 //                    these are middlewares          
-router.post('/users/me/avatar',auth,avatar.single('avatar'),async (req,res)=>{
+router.post('/users/me/avatar',async (req,res)=>{
     
     const buffer = await sharp(req.file.buffer).resize({width:250,height:250}).png().toBuffer()
     req.user.avatar = buffer
@@ -85,7 +81,7 @@ router.post('/users/me/avatar',auth,avatar.single('avatar'),async (req,res)=>{
 },(error,req,res,next)=>{
     res.status(400).send({error:error.message})
 })
-router.delete('/users/me/avatar',auth,async (req,res)=>{
+router.delete('/users/me/avatar',async (req,res)=>{
     try{
         req.user.avatar=undefined
         await req.user.save()
@@ -107,4 +103,9 @@ router.get('/users/:id/avatar',async(req,res)=>{
     }
 })
 
+router.get('/testing_route',(req,res)=>{
+    res.json({
+        Test:"Success"
+    });
+})
 module.exports = router

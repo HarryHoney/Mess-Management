@@ -10,7 +10,7 @@ var transporter = nodemailer.createTransport({
 
 const sendwecomeEmail = (email,name)=>{
     const data = `${name}, we welcome you to the NITJ Family`
-
+    console.log('Sending mail')
     var mailOptions = {
       from: 'alumnicellnitj@gmail.com',
       to: email,
@@ -27,4 +27,6 @@ const sendwecomeEmail = (email,name)=>{
     });
 }
 
-module.exports = sendwecomeEmail
+module.exports = {
+  sendwecomeEmail:sendwecomeEmail
+}
