@@ -53,3 +53,17 @@ UserModel.find().lean().exec(function (err, users) {
     return res.end(JSON.stringify(users));
 }
 Documents returned from queries with the lean option enabled are plain javascript objects, not Mongoose Documents.
+
+When a client needs to replace an existing Resource entirely, 
+they can use PUT. When they're doing a partial update, they can use HTTP PATCH.
+
+there is size limit on files in mongodb ie 16 mb/file... we can use GridFS to to exceed this limit
+
+in express we can do
+res.render()=> to send HTML page
+res.sendFile()=> it send back file
+res.JSON()=> it send JSON data back
+res.send()=> send message back
+
+
+Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. 

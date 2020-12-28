@@ -21,10 +21,10 @@ const studentSchema = new Schema({
         }
     },
     roll_number:{
-        type: Number,
+        type: String,
         required: true,
-        minlength = 8,
-        maxlength = 8,
+        minlength : 8,
+        maxlength : 8,
         trim: true,
         unique: true
     },
@@ -34,7 +34,7 @@ const studentSchema = new Schema({
         trim: true
     },
     photo_url:{
-        type:String
+        type:Buffer
     },
     balance:{
         type:Number,
