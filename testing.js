@@ -31,7 +31,7 @@ const features1 ={
 // })
 const retrive = async ()=>{
     let ss = await connectDB()
-    const data = await Student.findById('5fe9928310d9ab42f089dfa2')
+    const data = await Student.findById('5fe9bbff9cdc69655d07263c')
     const inputBuffer = data.photo_url
     sharp(inputBuffer)
     .resize(320, 240)

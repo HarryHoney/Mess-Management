@@ -2,11 +2,11 @@ const mongoose = require('mongoose')
 const { db } = require('./models/student')
 
 //Global
-// const URI = 'mongodb+srv://messUser:messPassword@cluster0.flpbe.mongodb.net/messData?retryWrites=true&w=majority'
+const URI = 'mongodb+srv://messUser:messPassword@cluster0.flpbe.mongodb.net/messData?retryWrites=true&w=majority'
 //Local
-const URI = 'mongodb://localhost:27017/messData'
+const URI_Local = 'mongodb://localhost:27017/messData'
 const connectDB = async ()=>{
-    const res = await mongoose.connect(URI,{
+    const res = await mongoose.connect(URI || URI_Local,{
         useUnifiedTopology: true,
         useNewUrlParser: true
     })

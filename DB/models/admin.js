@@ -29,17 +29,17 @@ const adminSchema = new Schema({
         breakfast:{
             type:Number,
             required:true,
-            maxlength:3
+            maxlength:2
         },
         lunch:{
             type:Number,
             required:true,
-            maxlength:3
+            maxlength:2
         },
         dinner:{
             type:Number,
             required:true,
-            maxlength:3
+            maxlength:2
         }
     }]
 })

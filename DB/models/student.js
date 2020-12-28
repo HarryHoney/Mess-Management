@@ -33,7 +33,7 @@ const studentSchema = new Schema({
         required: true,
         trim: true
     },
-    photo_url:{
+    photo_buffer:{
         type:Buffer
     },
     balance:{
