@@ -1,12 +1,12 @@
 const express = require('express')
 const Student = require('../DB/models/student')
-const sharp = require('sharp')
+const auth_verification = require('../middleware/auth_verification')
 const mailer = require('../emails/account')
 const router = new express.Router()
 const {getBuffer} = require('../utils/photoBuffer')
 
 //this function is complete only mailer is need to be added
-router.post('/add_new_student', async (req, res) => {
+router.post('/student/add_new_student', async (req, res) => {
     const data = req.body
     console.log(data)
     try {
@@ -17,24 +17,21 @@ router.post('/add_new_student', async (req, res) => {
             data.photo_buffer = buffer
         }
         const student = new Student(data)
+        const token = await student.generateAuthToken()
         console.log(student)
         await student.save()
         // mailer.sendwecomeEmail(data.email,data.name)
         
-        res.status(201).send(student)
+        res.status(201).send({student,token})
     } catch (e) {
         console.log(e)
         res.status(400).send(e)
     }
 })
 
-router.get('/students/me',async (req, res) => {
-    res.send(req.user)
-})
-
-router.patch('/users/me' ,async (req, res) => {
+router.patch('/student/update' ,auth_verification,async (req, res) => {
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'email', 'password', 'age']
+    const allowedUpdates = ['name', 'email', 'password', 'balance','mess_detail']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
     if (!isValidOperation) {
@@ -43,63 +40,65 @@ router.patch('/users/me' ,async (req, res) => {
 
     try {
 
-        updates.forEach((update)=> req.user[update] = req.body[update])
+        updates.forEach((update)=> req.student[update] = req.body[update])
 
-        await req.user.save()
+        await req.student.save()
         
-        res.send(req.user)
+        res.send(req.student)
     } catch (e) {
         res.status(500).send(e)
     }
 })
 
-router.delete('/users/me', async (req, res) => {
+//this should be called everytime when user gets to home screen so that it
+//can be checked that if it's already logged in or not
+router.get('/student/me',auth_verification,async (req, res) => {
+    res.send(req.student)
+})
+
+
+router.delete('/student/me',auth_verification,async (req, res) => {
     try {
-        await req.user.remove()
-        res.send(req.user)
+        await req.student.remove()
+        res.send(req.student)
     } catch (e) {
         res.status(500).send(e)
     }
 })
 
-router.post('/users/login',async (req,res)=>{
+router.post('/student/login',async (req,res)=>{
     try{
-        const user = await User.findByCredentials(req.body.email,req.body.password)
-        const token = await user.generateAuthToken()
-        res.send({user , token})
+        const student = await Student.findByCredentials(req.body.roll_number,req.body.password)
+        const token = await student.generateAuthToken()
+        res.send({student , token})
     }catch(e){
         res.status(400).send(e)
     }
 })
-//                    these are middlewares          
-router.post('/users/me/avatar',async (req,res)=>{
-    
-    const buffer = await sharp(req.file.buffer).resize({width:250,height:250}).png().toBuffer()
-    req.user.avatar = buffer
-    await req.user.save()
-    res.send()
-},(error,req,res,next)=>{
-    res.status(400).send({error:error.message})
-})
-router.delete('/users/me/avatar',async (req,res)=>{
+
+router.get('/student/logout',auth_verification, async(req,res)=>{
     try{
-        req.user.avatar=undefined
-        await req.user.save()
-        res.send('Removed')
-    }catch(e){
-        res.status(500).send(e)
+        const student = req.student
+        const itemToRemove = req.curr_token;
+        const filteredList = student.tokens.filter((item) => item.token !== itemToRemove);
+        student.tokens = filteredList
+        await student.save()
+        res.json({
+            Status:'Done'   
+        })
+    }
+    catch(e){
+        res.status(400).send(e)
     }
 })
-router.get('/users/:id/avatar',async(req,res)=>{
+
+router.get('/student/logoutAll',auth_verification,async (req,res)=>{
     try{
-        const user = await User.findById(req.params.id)
-        if(!user || !user.avatar){
-            throw new Error('could not find')
-        }
-        res.set('Content-Type','image/png')
-        res.send(user.avatar)
+        req.student.tokens = []
+        await req.student.save()
+        res.send()
     }catch(e){
-        res.status(404).send(e)
+        res.status(500).send()
     }
 })
 
@@ -108,4 +107,6 @@ router.get('/testing_route',(req,res)=>{
         Test:"Success"
     });
 })
-module.exports = router
+module.exports = {
+    studentRouter:router
+}

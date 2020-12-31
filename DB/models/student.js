@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const { Schema } = mongoose
 const studentSchema = new Schema({
@@ -62,6 +63,14 @@ const studentSchema = new Schema({
     end_data:{
         type:Date
     }
+    }],
+    // we are having tokens here because login can be from multiple 
+    // devices
+    tokens:[{
+        token:{
+            type:String,
+            require: true
+        }
     }]
 })
 
@@ -87,6 +96,13 @@ studentSchema.pre('save',async function(next){
     }
     next()
 })
+
+studentSchema.methods.generateAuthToken = async function(){
+    const user = this
+    const token = jwt.sign({roll_number:user.roll_number.toString()},'getting token')
+    user.tokens = user.tokens.concat({token})
+    return token
+}
 
 //now let us suppose administration want the data of student. so it's easy for us to send that data in 
 //in form of an object which is already present in the database. but there password is also is saved and that

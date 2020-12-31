@@ -4,7 +4,7 @@ const cors = require('cors')
 
 const app = express();
 const connectDB = require('./DB/connection')
-const studentRouter = require('./route/student')
+const {studentRouter} = require('./route/student')
 
 connectDB()
 app.use(cors())

@@ -25,16 +25,29 @@ const features1 ={
     password:'honeymoney'
 }
 
-savingData(features1).catch((err)=>{
-    console.log(err)
-})
-const retrive = async ()=>{
+// savingData(features1).catch((err)=>{
+//     console.log(err)
+// })
+const retrive = async (roll_number)=>{
     let ss = await connectDB()
-    const data = await Student.findById('5fe9bbff9cdc69655d07263c')
-    const inputBuffer = data.photo_url
-    sharp(inputBuffer)
-    .resize(320, 240)
-    .toFile('output.webp', (err, info) => { console.log(info) });
-}
-// retrive()
+    try
+    {
+        const data = await Student.findOne({'roll_number':roll_number})
+        // const inputBuffer = data.photo_buffer
+        // delete data.password
+        console.log(typeof(data.tokens))
+        // sharp(inputBuffer)
+        // .resize(320, 240)
+        // .toFile('output.png', (err, info) => { console.log(info) });
 
+        return {'result':'Success'}
+    }
+    catch(e)
+    {
+        return {'result':'Failure','message':e}
+    }
+    
+}
+console.log( retrive(17103034))
+
+console.log({'result':'Success'})
