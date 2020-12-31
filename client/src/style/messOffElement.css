@@ -1,0 +1,14 @@
+.mRow{
+    width:60%;
+    display: inline-flex;
+    flex-wrap: wrap;
+    margin: 0 20%;
+}
+
+.mCell{
+    display: inline-block;
+    width:33.33%;
+    font-size:1.2em;
+    padding:3px 0;
+}
+
