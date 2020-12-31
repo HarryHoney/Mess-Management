@@ -70,6 +70,7 @@ router.post('/student/login',async (req,res)=>{
     try{
         const student = await Student.findByCredentials(req.body.roll_number,req.body.password)
         const token = await student.generateAuthToken()
+        await student.save()
         res.send({student , token})
     }catch(e){
         res.status(400).send(e)

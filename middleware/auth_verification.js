@@ -4,7 +4,6 @@ const Student = require('../DB/models/student')
 const auth_verification = async(req,res,next)=>{
     try{
         const token = req.header('Authorization').replace('Bearer ','')
-        console.log(token)
         const decoded = jwt.verify(token,'getting token')
         const student = await Student.findOne({roll_number: decoded.roll_number,'tokens.token':token
     })

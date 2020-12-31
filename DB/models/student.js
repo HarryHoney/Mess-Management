@@ -75,16 +75,16 @@ const studentSchema = new Schema({
 })
 
 studentSchema.statics.findByCredentials = async (roll_number,password)=>{
-    const user = await User.findOne({roll_number})
+    const student = await Student.findOne({roll_number})
     
-    if(!user){
+    if(!student){
         throw new Error('Unable to login')
     }
-    const isMatch = await bcrypt.compare(password,user.password)
+    const isMatch = await bcrypt.compare(password,student.password)
     //console.log(password)
     if(!isMatch)
     throw new Error('Unable to login')
-    return user
+    return student
 }
 //Hashing plain text before saving
 studentSchema.pre('save',async function(next){
@@ -99,8 +99,21 @@ studentSchema.pre('save',async function(next){
 
 studentSchema.methods.generateAuthToken = async function(){
     const user = this
-    const token = jwt.sign({roll_number:user.roll_number.toString()},'getting token')
+    const token = jwt.sign({roll_number:user.roll_number.toString()},'getting token',{expiresIn:'2 days'})
     user.tokens = user.tokens.concat({token})
+    
+    if(user.tokens.length>5){
+        let remaining_token = []
+        user.tokens.forEach(element => {
+            const {exp} = jwt.decode(element.token,'getting token')
+            if (Date.now() <= exp * 1000) {// valid
+                remaining_token.push(element)
+              }
+        })
+        user.tokens = remaining_token
+        await user.save()
+    }
+
     return token
 }
 
