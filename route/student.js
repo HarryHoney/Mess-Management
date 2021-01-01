@@ -1,12 +1,12 @@
 const express = require('express')
 const Student = require('../DB/models/student')
-const auth_verification = require('../middleware/auth_verification')
+const {auth_verification} = require('../middleware/auth_verification')
 const mailer = require('../emails/account')
 const router = new express.Router()
 const {getBuffer} = require('../utils/photoBuffer')
 
 //this function is complete only mailer is need to be added
-router.post('/student/add_new_student', async (req, res) => {
+router.post('/add_new_student', async (req, res) => {
     const data = req.body
     console.log(data)
     try {
@@ -18,7 +18,6 @@ router.post('/student/add_new_student', async (req, res) => {
         }
         const student = new Student(data)
         const token = await student.generateAuthToken()
-        console.log(student)
         await student.save()
         // mailer.sendwecomeEmail(data.email,data.name)
         
@@ -29,7 +28,7 @@ router.post('/student/add_new_student', async (req, res) => {
     }
 })
 
-router.patch('/student/update' ,auth_verification,async (req, res) => {
+router.patch('/update' ,auth_verification,async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'email', 'password', 'balance','mess_detail']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -52,12 +51,12 @@ router.patch('/student/update' ,auth_verification,async (req, res) => {
 
 //this should be called everytime when user gets to home screen so that it
 //can be checked that if it's already logged in or not
-router.get('/student/me',auth_verification,async (req, res) => {
+router.get('/me',auth_verification,async (req, res) => {
     res.send(req.student)
 })
 
 
-router.delete('/student/me',auth_verification,async (req, res) => {
+router.delete('/me',auth_verification,async (req, res) => {
     try {
         await req.student.remove()
         res.send(req.student)
@@ -66,7 +65,7 @@ router.delete('/student/me',auth_verification,async (req, res) => {
     }
 })
 
-router.post('/student/login',async (req,res)=>{
+router.post('/login',async (req,res)=>{
     try{
         const student = await Student.findByCredentials(req.body.roll_number,req.body.password)
         const token = await student.generateAuthToken()
@@ -77,7 +76,7 @@ router.post('/student/login',async (req,res)=>{
     }
 })
 
-router.get('/student/logout',auth_verification, async(req,res)=>{
+router.get('/logout',auth_verification, async(req,res)=>{
     try{
         const student = req.student
         const itemToRemove = req.curr_token;
@@ -93,7 +92,7 @@ router.get('/student/logout',auth_verification, async(req,res)=>{
     }
 })
 
-router.get('/student/logoutAll',auth_verification,async (req,res)=>{
+router.get('/logoutAll',auth_verification,async (req,res)=>{
     try{
         req.student.tokens = []
         await req.student.save()

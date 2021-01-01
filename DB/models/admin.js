@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const { Schema } = mongoose
 
 const adminSchema = new Schema({
@@ -9,8 +11,8 @@ const adminSchema = new Schema({
     userID:{
         type: Number,
         required: true,
-        minlength = 8,
-        maxlength = 8,
+        minlength : 8,
+        maxlength : 8,
         trim: true,
         unique: true
     },
@@ -25,37 +27,47 @@ const adminSchema = new Schema({
             }
         }
     },
-    mess_charges:[{
-        breakfast:{
-            type:Number,
-            required:true,
-            maxlength:2
-        },
-        lunch:{
-            type:Number,
-            required:true,
-            maxlength:2
-        },
-        dinner:{
-            type:Number,
-            required:true,
-            maxlength:2
+    // we are having tokens here because login can be from multiple 
+    // devices
+    tokens:[{
+        token:{
+            type:String,
+            require: true
         }
     }]
 })
 
 adminSchema.statics.findByCredentials = async (userID,password)=>{
-    const user = await User.findOne({userID})
-    
+    const user = await Admin.findOne({userID})
     if(!user){
-        throw new Error('Unable to login')
+        throw new Error('Admin Does not exist')
     }
     const isMatch = await bcrypt.compare(password,user.password)
-    //console.log(password)
     if(!isMatch)
-    throw new Error('Unable to login')
+    throw new Error('password is wrong')
     return user
 }
+
+adminSchema.methods.generateAuthToken = async function(){
+    const user = this
+    const token = jwt.sign({userID:user.userID.toString()},'getting token',{expiresIn:'2 days'})
+    user.tokens = user.tokens.concat({token})
+    
+    if(user.tokens.length>3){
+        let remaining_token = []
+        user.tokens.forEach(element => {
+            const {exp} = jwt.decode(element.token,'getting token')
+            if (Date.now() <= exp * 1000) {// valid
+                remaining_token.push(element)
+              }
+        })
+        user.tokens = remaining_token
+        await user.save()
+    }
+
+    return token
+}
+
 //Hashing plain text before saving
 adminSchema.pre('save',async function(next){
     const user = this

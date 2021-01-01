@@ -99,7 +99,7 @@ studentSchema.pre('save',async function(next){
 
 studentSchema.methods.generateAuthToken = async function(){
     const user = this
-    const token = jwt.sign({roll_number:user.roll_number.toString()},'getting token',{expiresIn:'2 days'})
+    const token = jwt.sign({roll_number:user.roll_number.toString()},'getting token',{expiresIn:'3 days'})
     user.tokens = user.tokens.concat({token})
     
     if(user.tokens.length>5){
