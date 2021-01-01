@@ -6,13 +6,16 @@ const app = express();
 const connectDB = require('./DB/connection')
 const {studentRouter} = require('./route/student')
 const {adminRouter} = require('./route/admin')
+const {complaintRouter} = require('./route/complaint')
 
 connectDB()
+
 app.use(cors())
 app.use(morgan('tiny'))
 app.use(express.json({extended:false}))
 app.use('/student',studentRouter)
 app.use('/admin',adminRouter)
+app.use('/',complaintRouter)
 
 const Port = 3000 || process.env.Port;
 
