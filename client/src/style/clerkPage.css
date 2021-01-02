@@ -16,8 +16,8 @@
 }
 
 .mPage{
-    width:50%;
-    margin: 0 10%;
+    width:30%;
+    margin: 0 5%;
     float: left;
 }
 
@@ -50,3 +50,17 @@
     margin-bottom: 20px;
 }
 
+.imposeCharges{
+    width: 30%;
+    float: left;
+    font-size: 1em;
+}
+
+.charges{
+    border: solid 5px #c5c6c7;   
+    padding-bottom: 20px;
+}
+
+.fBox{
+    margin: 5px;
+}

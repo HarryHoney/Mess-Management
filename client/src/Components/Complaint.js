@@ -2,18 +2,15 @@ import React from 'react';
 import '../style/complaint.css';
 
 const setStatus = function(status){
-    if(status==0)
+    if(status===0)
         return "Submitted";
-    if(status==1)
+    if(status===1)
         return "Processing";
     
     return "Resolved";
 }
 
 class Complaint extends React.Component{
-    constructor(props){
-        super(props);
-    }
 
     state = {
         status: setStatus(this.props.Status)

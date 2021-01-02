@@ -215,7 +215,7 @@ class MainPage extends React.Component {
                                 />
                             </div>
                             <button onClick={this.addComplaint} >Add Complaint</button>
-                            <Link to='/complaints'><button>View Complaints</button></Link>
+                            <Link to='/complaintsList'><button>View Complaints</button></Link>
                         </form>
                     </div>
                 </div>

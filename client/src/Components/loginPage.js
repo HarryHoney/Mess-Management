@@ -1,6 +1,5 @@
 import React from 'react';
 import Login from './login';
-import { Link } from 'react-router-dom';
 import '../style/LoginPage.css';
 
 // var temp = {

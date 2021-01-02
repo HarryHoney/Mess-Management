@@ -7,9 +7,9 @@ import MainPage from '../Components/MainPage';
 import ClerkPage from '../Components/ClerkPage';
 import DataPage from '../Components/DataPage';
 import NotFoundPage from '../Components/NotFoundPage';
-import ImposeChargesPage from '../Components/ImposeChargesPage';
 import MessOffPage from '../Components/MessOffPage';
 import ComplaintsPage from '../Components/ComplaintsPage';
+import ComplaintsPageForS from '../Components/ComplaintsPageForS';
 import '../store/configureStore';
 
 const AppRouter = () => (
@@ -23,9 +23,9 @@ const AppRouter = () => (
                 <Route path='/mainPage/:id' component={MainPage} exact={true} />
                 <Route path='/dataPage' component={DataPage} exact={true} />
                 <Route path='/clerkPage' component={ClerkPage} exact={true} />
-                <Route path='/charges' component={ImposeChargesPage} exact={true} />
                 <Route path='/messOff' component={MessOffPage} exact={true} />
                 <Route path='/complaints' component={ComplaintsPage} exact={true} />
+                <Route path='/complaintsList' component={ComplaintsPageForS} exact={true} />
                 <Route component={NotFoundPage} />
             </Switch>
         </BrowserRouter>

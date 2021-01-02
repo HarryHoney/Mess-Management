@@ -14,16 +14,25 @@
     float: left;
 }
 
+.camBox{
+    width: 30%;
+    float: left;
+    padding-top: 10px;
+}
+
+.camBox button{
+    z-index: 100;
+}
+
 .right_box{
-    width: 55%;
+    width: 25%;
     float: left;
     text-align: center;
-    padding-top:5%;
 }
 
 .right_box button{
     width: 40%;
-    margin-left: 15%;
+    margin-left: 5%
 }
 
 .box{

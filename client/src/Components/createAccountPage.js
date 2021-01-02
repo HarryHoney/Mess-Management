@@ -1,17 +1,18 @@
 import '../style/createAccountPage.css';
 import React from 'react';
 import database from '../firebase/firebase';
-const axios = require('axios');
+
 var request = require('request');
 
 class CreateAccountPage extends React.Component {
-    
+
     state={
         rollNo : undefined,
         userName : undefined,
         roomNo : undefined,
         password : undefined,
-        allowSubmit : false
+        allowSubmit : false,
+        imgBlob: null
     }
 
     handleRollNo = (e) => {
@@ -59,6 +60,43 @@ class CreateAccountPage extends React.Component {
         }
     }
 
+    processDevices(devices) {
+        devices.forEach(device => {
+            console.log(device.label);
+            this.setDevice(device);
+        });
+    }
+
+    async setDevice(device) {
+        const { deviceId } = device;
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { deviceId } })
+        this.videoPlayer.srcObject = stream;
+        this.videoPlayer.play();
+    }
+
+    async componentDidMount() {
+        const cameras = await navigator.mediaDevices.enumerateDevices();
+        this.processDevices(cameras);
+    }
+
+    takePhoto = () => {
+        const { sendFile } = this.props;
+        const context = this.canvas.getContext('2d');
+        context.drawImage(this.videoPlayer, 0, 0, 360, 270);
+        this.canvas.toBlob((blob) => {
+            this.setState(() => {
+                return{
+                    ...this.state,
+                    imgBlob : blob
+                }
+            })
+            console.log(this.state.imgBlob);
+        },sendFile);
+    };
+
+
+
+
     onSubmit = (e) => {
         e.preventDefault();
         if(this.state.allowSubmit){
@@ -74,21 +112,21 @@ class CreateAccountPage extends React.Component {
                 password : data.password
             });
             this.props.history.push('/ClerkPage');
-            request.post({
-                headers : {'content-type' : 'application/json'},
-                url: 'https://us-central1-hactathon2019.cloudfunctions.net/nitjalandhar/student_signup',
-                body: {
-                    "roll" : data.rollNo,
-                    "name" : data.userName,
-                    "room" : data.roomNo,
-                    "hostel" : 4,
-                } ,
-                json: true
-            }, function(error, response, body){
-                if(error)
-                    console.log("Error. "+error);
-                console.log(body);
-            });
+            // request.post({
+            //     headers : {'content-type' : 'application/json'},
+            //     url: 'https://us-central1-hactathon2019.cloudfunctions.net/nitjalandhar/student_signup',
+            //     body: {
+            //         "roll" : data.rollNo,
+            //         "name" : data.userName,
+            //         "room" : data.roomNo,
+            //         "hostel" : 4,
+            //     } ,
+            //     json: true
+            // }, function(error, response, body){
+            //     if(error)
+            //         console.log("Error. "+error);
+            //     console.log(body);
+            // });
         }
         else{
             alert('Passwords do not match');
@@ -97,21 +135,27 @@ class CreateAccountPage extends React.Component {
 
     handleClick=(e) => {
         e.preventDefault();
-        const roll_number = JSON.stringify(this.state.rollNo);
-        const url = `http://localhost:3030/server?roll_number=${roll_number}`
-        const doit = async (req, res) => {
-            const re = await axios.get(url)
-            res.send(re)
-        }
-        doit();
-      
+
+        this.takePhoto();
+
     };
+
+
+    setCam = (cam) => {
+        this.setState(() => {
+            return {
+                ...this.state,
+                cam
+            }
+        })
+    }
+
     render(){
         return (
         
             <div className='createAccountPage'>
                 <h2>Create Account</h2>
-                <form onSubmit={this.onSubmit} >
+                <form>
                     <div className='left_box'>
                         <div className='box'>
                             <h3>Roll No. :</h3>
@@ -134,11 +178,19 @@ class CreateAccountPage extends React.Component {
                             <input type='password' onChange={this.checkPassword}/>
                         </div>
                     </div>
+
+                    <div className='camBox'>
+                        <canvas width="270" height="270" ref={ref => (this.canvas = ref)} />
+                    </div> 
+                    
                     <div className='right_box'>
-                        <button onClick={this.handleClick}>Take Photos</button>
-                        <button >Sign Up</button>
+                        <video ref={ref => (this.videoPlayer = ref)} width="270" height="270" />
+                        <button onClick={this.handleClick}>Take Photo</button>
+                        <button onClick={this.onSubmit} >Sign Up</button>
                     </div>
                 </form>
+                <div>
+                </div>
             </div>
         );
     }

@@ -41,7 +41,7 @@ class ComplaintsPage extends React.Component{
                                 {...data} 
                                 changeStatus={this.changeStatus} 
                                 deleteComplaint={this.deleteComplaint} 
-                                disp={this.props.location.disp}
+                                disp={true}
                                 />
                     })    
                 }

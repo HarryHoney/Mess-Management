@@ -21,9 +21,56 @@ window.onload = func();
 class ClerkPage extends React.Component { 
     state={
         messOffList : [],
-        vis: false,
-        messWastage : [],
-        visforW : false
+        rNo : "",
+        details : "",
+        charges : ""
+    }
+
+    changeRNo = (e) => {
+        const val = e.target.value;
+        this.setState(() => {
+            return {
+                ...this.state,
+                rNo : val
+            }
+        })
+    }
+
+    changeDetails = (e) => {
+        const val = e.target.value;
+        this.setState(() => {
+            return {
+                ...this.state,
+                details : val
+            }
+        })
+    }
+
+    changeCharges = (e) => {
+        const val = e.target.value;
+        this.setState(() => {
+            return {
+                ...this.state,
+                charges : val
+            }
+        })
+    }
+
+    handleChargesSubmit = (e) => {
+        e.preventDefault();
+        
+        //check values
+        //upload charges
+        console.log('charges uploaded')
+
+        this.setState(() => {
+            return{
+                ...this.state,
+                rNo : "",
+                details : "",
+                charges : ""
+            }
+        })
     }
 
     handleMessOffList = () => {
@@ -58,18 +105,6 @@ class ClerkPage extends React.Component {
 
     }
 
-    handleFoodWasteManagement = () => {
-    
-        this.setState((prevState)=>{
-            return{
-                ...this.state,
-                messWastage : data,
-                visforW : !prevState.visforW
-            }
-        });
-        console.log("rent");
-    }
-
     handleLogOut = () => {
         this.props.history.push('/');
     }
@@ -81,9 +116,6 @@ class ClerkPage extends React.Component {
                 <div className='sideBar'>
                     <Link to='/createAccount'>
                         <button >Create Account</button>
-                    </Link>
-                    <Link to='/charges'>
-                        <button >Impose Charges</button>
                     </Link>
                     <Link to='/messOff'>
                         <button >Mess-Off</button>
@@ -114,6 +146,26 @@ class ClerkPage extends React.Component {
                     </div>
         
 
+                </div>
+                <div className='imposeCharges'>
+                    <div className='charges'>
+                            <h2>Impose Charges</h2>
+                            <form>
+                                <div className='fBox'>
+                                    <label>Roll No. : </label>
+                                    <input type='number' value={this.state.rNo} onChange={this.changeRNo} />
+                                </div>
+                                <div className='fBox'>
+                                    <label>Details : </label>
+                                    <input type='text' value={this.state.details} onChange={this.changeDetails} />
+                                </div>
+                                <div className='fBox'>
+                                    <label>Charge : </label>
+                                    <input type='number' value={this.state.charges} onChange={this.changeCharges} />
+                                </div>
+                                <button onClick={this.handleChargesSubmit} >Submit</button>
+                            </form>
+                    </div>
                 </div>
 
             </div>
