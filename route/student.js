@@ -1,76 +1,30 @@
 const express = require('express')
 const Student = require('../DB/models/student')
 const {auth_verification} = require('../middleware/auth_verification')
-const mailer = require('../emails/account')
 const router = new express.Router()
-const {getBuffer} = require('../utils/photoBuffer')
+const {change_Balance} = require('../utils/Account_manage')
 
-//this function is complete only mailer is need to be added
-router.post('/add_new_student', async (req, res) => {
-    const data = req.body
-    console.log(data)
-    try {
-        if(data.photo_buffer != null)
-        {
-            //ashu will make sure that the user will select image file only
-            buffer = await getBuffer(data.photo_buffer)
-            data.photo_buffer = buffer
-        }
-        const student = new Student(data)
-        const token = await student.generateAuthToken()
-        await student.save()
-        // mailer.sendwecomeEmail(data.email,data.name)
-        
-        res.status(201).send({student,token})
-    } catch (e) {
-        console.log(e)
-        res.status(400).send(e)
-    }
-})
-
-router.patch('/update' ,auth_verification,async (req, res) => {
-    const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'email', 'password', 'balance','mess_detail']
-    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
-
-    if (!isValidOperation) {
-        return res.status(400).send({ error: 'Invalid updates!' })
-    }
-
-    try {
-
-        updates.forEach((update)=> req.student[update] = req.body[update])
-
-        await req.student.save()
-        
-        res.send(req.student)
-    } catch (e) {
-        res.status(500).send(e)
-    }
-})
 
 //this should be called everytime when user gets to home screen so that it
 //can be checked that if it's already logged in or not
 router.get('/me',auth_verification,async (req, res) => {
-    res.send(req.student)
-})
-
-
-router.delete('/me',auth_verification,async (req, res) => {
-    try {
-        await req.student.remove()
-        res.send(req.student)
-    } catch (e) {
-        res.status(500).send(e)
+    try{
+        const data = await change_Balance(req.student)
+        res.status(200).send(data)
+    }
+    catch(e){
+        res.status(400).send(e)
     }
 })
+
 
 router.post('/login',async (req,res)=>{
     try{
         const student = await Student.findByCredentials(req.body.roll_number,req.body.password)
         const token = await student.generateAuthToken()
         await student.save()
-        res.send({student , token})
+        const data = await change_Balance(req.student)
+        res.status(200).send({data,token})
     }catch(e){
         res.status(400).send(e)
     }
@@ -99,6 +53,42 @@ router.get('/logoutAll',auth_verification,async (req,res)=>{
         res.send()
     }catch(e){
         res.status(500).send()
+    }
+})
+// mess start date is 1 jan 2021 = 1609459200
+//morning breakfast is 32400 as per standard timestamp 9am
+// meals removed intially = (1609459200/86400) = 18628
+//lunch is 50400 as per standard timestamp 2pm
+//dinner is 75600 as per standard timestamp 9pm
+router.post('/mess_off', auth_verification,async (req,res)=>{
+    try{
+        const student = req.student
+        if(student.mess_detail.start_date === undefined || student.mess_detail.end_date < Date.now())
+        {
+            student.mess_detail.start_date = req.body.start_date
+            student.mess_detail.end_date = req.body.start_date
+            await student.save()
+            res.status(201).send({
+                Status : 'Successful'
+            })
+        }
+        else{
+            const d1 = new Date(student.mess_detail.end_date)
+            if(d1 < Date.now()){
+                student.mess_detail.start_date = req.body.start_date
+                student.mess_detail.end_date = req.body.end_date
+                await student.save()
+                res.status(201).send({
+                    Status : 'Successful'
+                })
+            }
+            else
+                throw new Error('The mess is already off')
+        }
+    }
+    catch(e)
+    {
+        res.status(400).send(e)
     }
 })
 

@@ -2,6 +2,9 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const messCharges_Schema = new Schema({
+    id:{
+        type : Number
+    },
     breakfast:{
         type:Number,
         required:true,

@@ -53,5 +53,13 @@ const retrive = async (roll_number)=>{
 const token2='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiIxNzEwMzA2NyIsImlhdCI6MTYwOTQ4NjMwMCwiZXhwIjoxNjA5NTcyNzAwfQ.tAOq41JVfhhE_oXKmcsb9HVIcOVavHxAk_4lu3X15ng'
 // console.log({'result':'Success'})
 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xsX251bWJlciI6IjE3MTAzMDc5IiwiaWF0IjoxNjA5NDg2NjIxLCJleHAiOjE2MDk2NTk0MjF9.Dsw7K7vmgljeL3pYKwfByeBo4oR1NUxDkOWGdpMe8Xk'
-const decoded = jwt.verify(token2,'getting token')
-console.log(decoded)
+// const decoded = jwt.verify(token2,'getting token')
+// console.log(typeof(Date.now()))
+//1607299200000
+//1606867200000
+const d1 = new Date(1607299200000)
+const d2 = new Date(1606867200000)
+const d3 = new Date(d1.toString().slice(0,15))
+console.log(d3.toString())
+console.log((d1-d2)/86400000)
+

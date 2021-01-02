@@ -2,10 +2,10 @@ const mess_Charges = require('../DB/models/mess_charges')
 
 const getCurrentCharges = async ()=>{
     try{
-    const data = await mess_Charges.findOne({_id:1})
+    const data = await mess_Charges.findOne({id:1})
     if(data == null){
         const obj = {
-            _id : 1,
+            id : 1,
             breakfast : 30,
             lunch : 30,
             dinner : 30,
@@ -26,7 +26,7 @@ const getCurrentCharges = async ()=>{
 const editCharges = async (changes)=>{
 
     try{
-        const data = await mess_Charges.findOne({_id:1})
+        let data = await mess_Charges.findOne({id:1})
         data.forEach(element => {
             data[element] = changes[element]
         })

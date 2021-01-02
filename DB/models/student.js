@@ -53,17 +53,14 @@ const studentSchema = new Schema({
             }
         }
     },
-    mess_detail:[{
-    mess_off:{
-        type: Boolean
+    mess_detail:{
+        start_date:{
+            type:String  //timestamp
+        },
+        end_date:{
+            type:String  //timestamp
+        }
     },
-    start_data:{
-        type:Date
-    },
-    end_data:{
-        type:Date
-    }
-    }],
     // we are having tokens here because login can be from multiple 
     // devices
     tokens:[{
@@ -71,7 +68,11 @@ const studentSchema = new Schema({
             type:String,
             require: true
         }
-    }]
+    }],
+    last_checkin:{
+        type:String,
+        required : true
+    }
 })
 
 studentSchema.statics.findByCredentials = async (roll_number,password)=>{
