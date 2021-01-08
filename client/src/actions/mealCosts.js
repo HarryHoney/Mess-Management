@@ -1,25 +1,32 @@
 import database from '../firebase/firebase';
+import axios from 'axios';
 
-export const changeBreakFast = (changedValue) => ({
+const apiUrl = "http://localhost:3000";
+
+export const changeBreakFast = (changedValue, token) => ({
     type : 'CHANGE_BREAKFAST',
-    changedValue
+    changedValue,
+    token
 });
 
-export const changeLunch = (changedValue) => ({
+export const changeLunch = (changedValue, token) => ({
     type : 'CHANGE_LUNCH',
-    changedValue
+    changedValue,
+    token
 });
 
-export const changeDinner = (changedValue) => ({
+export const changeDinner = (changedValue, token) => ({
     type : 'CHANGE_DINNER',
-    changedValue
+    changedValue,
+    token
 });
 
-export const changeMealCosts = (changedB, changedL, changedD) => ({
+export const changeMealCosts = (changedB, changedL, changedD, token) => ({
     type : 'CHANGE_MEAL_COSTS',
     changedB,
     changedL,
-    changedD
+    changedD, 
+    token
 });
 
 export const setMealCosts = ( mealCosts ) => ({
@@ -27,16 +34,24 @@ export const setMealCosts = ( mealCosts ) => ({
     mealCosts
 });
 
-export const startSetMeals = () => {
+export const startSetMeals = (token) => {
     return (dispatch) => {
-      return database.ref('mealCosts').once('value').then((snapshot) => {
-        const mealCosts = {
-            breakFast : snapshot.val().breakFast,
-            lunch : snapshot.val().lunch,
-            dinner : snapshot.val().dinner
+      return axios.get(`${apiUrl}/admin/getCurrentCharges`, {
+        headers : {
+            'Authorization' : token
         }
-  
-        dispatch(setMealCosts( mealCosts ));
-      });
+        }).then((res) => {
+            const mealCosts = {
+                breakfast: res.data.breakfast,
+                lunch: res.data.lunch,
+                dinner: res.data.dinner
+            }
+            console.log(mealCosts);
+            
+            dispatch(setMealCosts(mealCosts));
+        }, () => {
+            console.log('unable to set costs');
+        })        
+    
     };
   };

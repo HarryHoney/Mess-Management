@@ -63,6 +63,7 @@ route.delete('/delete_student',admin_verification,async (req, res) => {
 
 route.post('/add_admin',async (req,res)=>{
     const data = req.body
+    console.log(data);
     try{
         const admin = new Admin(data)
         const curr_token = await admin.generateAuthToken()

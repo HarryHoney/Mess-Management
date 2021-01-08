@@ -66,7 +66,7 @@ router.post('/mess_off', auth_verification,async (req,res)=>{
         if(student.mess_detail.start_date === undefined || student.mess_detail.end_date < Date.now())
         {
             student.mess_detail.start_date = req.body.start_date
-            student.mess_detail.end_date = req.body.start_date
+            student.mess_detail.end_date = req.body.end_date
             await student.save()
             res.status(201).send({
                 Status : 'Successful'

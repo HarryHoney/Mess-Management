@@ -1,8 +1,14 @@
-import { createStore } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import mealReducer from '../reducers/mealCosts';
+import userDetailsReducer from '../reducers/userDetails';
 
 const configureStore = () => {
-    const store = createStore(mealReducer);
+    const reducer = combineReducers({
+        meal: mealReducer,
+        userDetails: userDetailsReducer
+    })
+    const store = createStore(reducer, applyMiddleware(thunk));
     return store;
 }
 

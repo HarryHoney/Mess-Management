@@ -1,45 +1,100 @@
 import '../firebase/firebase';
-import database from '../firebase/firebase';
+// import database from '../firebase/firebase';
+import axios from 'axios';
 
 var mealReducerDefaultState = {
     mealCosts : {
-    breakFast : 0 ,
+    breakfast : 0 ,
     lunch : 0, 
     dinner : 0
     }
 }
+
+const apiUrl = "http://localhost:3000";
 
 const mealReducer = (state = mealReducerDefaultState, action) => {
     
 
     switch (action.type){
         case 'CHANGE_BREAKFAST':
-            var temp1 = state.mealCosts;
-            database.ref('mealCosts/breakFast').set(action.changedValue);
-            return { ...state , mealCosts : { ...temp1 , breakFast : action.changedValue }
+            var temp1 = state.mealCosts
+            var data1 = {
+                breakfast: action.changedValue,
+                lunch: temp1.lunch,
+                dinner: temp1.dinner
+            }
+            axios.post(`${apiUrl}/admin/editCharges`, data1, {
+                headers : {
+                    'Authorization' : action.token
+                }
+            }).then((res) => {
+                console.log(res.data);
+            }, () => {
+                console.log('unable to change breakfast');
+            })
+
+            return { ...state , mealCosts : { ...temp1 , breakfast : action.changedValue }
             }
         case 'CHANGE_LUNCH':
             var temp2 = state.mealCosts;
-            database.ref('mealCosts/lunch').set(action.changedValue);
+            var data2 = {
+                breakfast: temp2.breakfast,
+                lunch: action.changedValue,
+                dinner: temp2.dinner
+            }
+            axios.post(`${apiUrl}/admin/editCharges`, data2, {
+                headers : {
+                    'Authorization' : action.token
+                }
+            }).then((res) => {
+                console.log(res.data);
+            }, () => {
+                console.log('unable to change lunch');
+            })
+
             return { ...state , mealCosts : { ...temp2 , lunch : action.changedValue }
             }
         case 'CHANGE_DINNER':
             var temp3 = state.mealCosts;
-            database.ref('mealCosts/dinner').set(action.changedValue);
+            var data3 = {
+                breakfast: temp3.breakfast,
+                lunch: temp3.lunch,
+                dinner: action.changedValue
+            }
+            axios.post(`${apiUrl}/admin/editCharges`, data3, {
+                headers : {
+                    'Authorization' : action.token
+                }
+            }).then((res) => {
+                console.log(res.data);
+            }, () => {
+                console.log('unable to change dinner');
+            })
+            
             return { ...state , mealCosts : { ...temp3 , dinner : action.changedValue }
             }
         case 'CHANGE_MEAL_COSTS':
-            var temp4 = state.mealCosts;
-            var x = { ...temp4 , 
-                breakFast : action.changedB ,
+            var data = {
+                breakfast : action.changedB ,
                 lunch : action.changedL ,
-                dinner : action.changedD }
-            database.ref('mealCosts').set(x);
-            return { ...state , mealCosts : {...x}
-                
+                dinner : action.changedD 
             }
-        case 'SET_EXPENSES':
-            return action.mealCosts;
+            
+            axios.post(`${apiUrl}/admin/editCharges`, data, {
+                headers : {
+                    'Authorization' : action.token
+                }
+            }).then((res) => {
+                console.log(res.data);
+            }, () => {
+                console.log('unable to change mealCosts');
+            })
+            return { ...state , mealCosts : {...data}    
+            }
+
+        case 'SET_MEAL_COSTS':
+            return { mealCosts : {...action.mealCosts}}
+
         default :
             return state;
     }

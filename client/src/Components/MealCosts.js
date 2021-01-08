@@ -1,6 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import axios from 'axios';
+import { store } from '../store/configureStore';
+import { startSetMeals } from '../actions/mealCosts';
 import '../style/mealCosts.css';
+
+const apiUrl = "http://localhost:3000";
 
 class MealCosts extends React.Component { 
     constructor(props){
@@ -98,12 +103,20 @@ class MealCosts extends React.Component {
         this.props.onSubmitC(this.state.inc)
     }
 
+    componentDidMount(){
+
+        const meals = this.props.mealCosts;
+        if(meals.breakfast===0 && meals.lunch===0 && meals.dinner===0 ){
+            store.dispatch(startSetMeals(this.props.token));    
+        }
+    }
+
     render(){
         return(
             <div>
                 <h2>Meal Costs</h2>
                 <div>
-                    <h3>BreakFast : {this.props.mealCosts.breakFast}</h3>
+                    <h3>BreakFast : {this.props.mealCosts.breakfast}</h3>
                     {
                     !this.state.va &&
                         <button onClick={this.handleVisibilityA} >Edit</button>
@@ -111,8 +124,8 @@ class MealCosts extends React.Component {
                     {  this.state.va &&  
                             <form>  
                                 <input type='number' onChange={this.handleInputChangeA}  />
-                                <button class='halfB' type="button" onClick={this.handleSubmitA} >Submit</button>
-                                <button class='halfB' type="button" onClick={this.handleVisibilityA} >Cancel</button>
+                                <button className='halfB' type="button" onClick={this.handleSubmitA} >Submit</button>
+                                <button className='halfB' type="button" onClick={this.handleVisibilityA} >Cancel</button>
                             </form>
                     }
                 </div>
@@ -125,8 +138,8 @@ class MealCosts extends React.Component {
                     {  this.state.vb &&  
                             <form>  
                                 <input type='number' onChange={this.handleInputChangeB}  />
-                                <button class='halfB' type="button" onClick={this.handleSubmitB} >Submit</button>
-                                <button class='halfB' type="button" onClick={this.handleVisibilityB} >Cancel</button>
+                                <button className='halfB' type="button" onClick={this.handleSubmitB} >Submit</button>
+                                <button className='halfB' type="button" onClick={this.handleVisibilityB} >Cancel</button>
                             </form>
                     }
                 </div>
@@ -139,8 +152,8 @@ class MealCosts extends React.Component {
                     {  this.state.vc &&  
                             <form>  
                                 <input type='number' onChange={this.handleInputChangeC}  />
-                                <button class='halfB' type="button" onClick={this.handleSubmitC} >Submit</button>
-                                <button class='halfB' type="button" onClick={this.handleVisibilityC} >Cancel</button>
+                                <button className='halfB' type="button" onClick={this.handleSubmitC} >Submit</button>
+                                <button className='halfB' type="button" onClick={this.handleVisibilityC} >Cancel</button>
                             </form>
                     }
                 </div>
@@ -151,7 +164,8 @@ class MealCosts extends React.Component {
 
 const ConnectedMealCosts = connect((state)=>{
     return {
-        mealCosts: state.mealCosts
+        mealCosts: state.meal.mealCosts,
+        token: state.userDetails.token
     }
 })(MealCosts);
 

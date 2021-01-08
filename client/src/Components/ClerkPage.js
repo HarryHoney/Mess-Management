@@ -4,26 +4,17 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import MealCosts from './MealCosts';
 import {changeBreakFast,changeLunch, changeDinner} from '../actions/mealCosts';
-import database from '../firebase/firebase';
 
+//import database from '../firebase/firebase';
 
-const axios = require('axios');
-
-var data = [];
-
-const func = async() => {
-    const ata = await axios.get('https://us-central1-hactathon2019.cloudfunctions.net/nitjalandhar/per_for_clerk');
-        data = ata.data;
-}
-
-window.onload = func();
 
 class ClerkPage extends React.Component { 
+
     state={
-        messOffList : [],
         rNo : "",
         details : "",
-        charges : ""
+        charges : "",
+        jwt : localStorage.getItem('token') || null,
     }
 
     changeRNo = (e) => {
@@ -73,40 +64,12 @@ class ClerkPage extends React.Component {
         })
     }
 
-    handleMessOffList = () => {
-        database.ref('messOffList')
-          .once('value')
-          .then((snapshot) => {
-                var list = [];
-                snapshot.forEach((childSnapshot) => {
-                    list.push(
-                        {
-                        rollNo : childSnapshot.node_.children_.root_.value.value_,
-                        startDate : childSnapshot.node_.children_.root_.right.value.value_,
-                        endDate : childSnapshot.node_.children_.root_.left.value.value_
-                    }
-                    );
-                })
-                
-               
-
-                this.setState((prevState)=>{
-                    return{
-                        ...this.state,
-                        messOffList: list,
-                        vis: !prevState.vis
-                    }
-                });
-
-          })
-          .catch((e) => {
-              console.log('Error fetching data ', e);
-          });
-
-    }
-
     handleLogOut = () => {
         this.props.history.push('/');
+    }
+
+    componentDidMount(){
+
     }
 
     render(){
@@ -133,14 +96,14 @@ class ClerkPage extends React.Component {
                 <div className='mPage'>
                     <div className='mealCosts'>
                         <MealCosts  
-                            onSubmitA={(breakFast) => {
-                                this.props.dispatch(changeBreakFast(breakFast));
+                            onSubmitA={(breakfast) => {
+                                this.props.dispatch(changeBreakFast(breakfast, this.props.userDetails.token));
                             }}
                             onSubmitB={(lunch) => {
-                                this.props.dispatch(changeLunch(lunch));
+                                this.props.dispatch(changeLunch(lunch, this.props.userDetails.token));
                             }}
                             onSubmitC={(dinner) => {
-                                this.props.dispatch(changeDinner(dinner));
+                                this.props.dispatch(changeDinner(dinner, this.props.userDetails.token));
                             }}
                         />
                     </div>
@@ -173,6 +136,11 @@ class ClerkPage extends React.Component {
     }
 }
     
+const mapStateToProps = (state) => {
+    return {
+        userDetails : state.userDetails
+    }
+}
 
 
-export default connect()(ClerkPage)
+export default connect(mapStateToProps)(ClerkPage);
