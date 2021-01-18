@@ -1,6 +1,7 @@
 import '../style/mainPage.css';
 import React from 'react';
 import Records from './Records';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import 'react-dates/initialize';
@@ -134,14 +135,21 @@ class MainPage extends React.Component {
         })
     }
 
+    componentDidMount(){
+        console.log(this.props.userDetails);
+    }
+
     render(){
         return (
             <div className='mainPage'>
                 <div className='studentData'>
-                    <h3>User Name : {this.state.userName}</h3>
-                    <h3>Hostel No. : {this.state.hNo}</h3>
-                    <h3>Roll No. : {this.state.rollNo}</h3>
-                    <h3>Balance : {this.state.balance}</h3>
+                    <h3>User Name : {this.props.userDetails.name}</h3>
+                    <h3>Roll No. : {this.props.userDetails.userId}</h3>
+                    <h3>Room No. : {this.props.userDetails.roomNo}</h3>
+                    <h3>Hostel No. : 4</h3>
+                    <h3>Email : {this.props.userDetails.email}</h3>
+                    <h3>Balance : {this.props.userDetails.balance}</h3>
+
                     <Link to='/' ><button>Log Out</button></Link>
                 </div>
                 <Records
@@ -224,4 +232,10 @@ class MainPage extends React.Component {
     }
 };
 
-export default MainPage;
+const mapStateToProps = (state) => {
+    return {
+        userDetails : state.userDetails
+    }
+}
+
+export default connect(mapStateToProps)(MainPage);

@@ -16,12 +16,14 @@ route.get('/me',admin_verification, async(req,res)=>{
 route.post('/add_new_student', admin_verification,async (req, res) => {
     const data = req.body
     try {
-        if(data.photo_buffer != null)
-        {
-            //ashu will make sure that the user will select image file only
-            buffer = await getBuffer(data.photo_buffer)
-            data.photo_buffer = buffer
-        }
+
+        data.last_checkin = 'Fri Jan 01 2021'
+        // if(data.photo_buffer != null)
+        // {
+        //     //ashu will make sure that the user will select image file only
+        //     buffer = await getBuffer(data.photo_buffer)
+        //     data.photo_buffer = buffer
+        // }
         const student = new Student(data)
         const token = await student.generateAuthToken()
         await student.save()

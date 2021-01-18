@@ -1,7 +1,7 @@
 //This file contains the logic/Algorithm of charge formation
 const mess_Charges  = require('../DB/models/mess_charges')
 const change_Balance = async (student)=>{
-    if(student.mess_detail.start_date === undefined)
+    if(student.mess_detail === undefined || student.mess_detail.start_date === undefined)
         return student
     try{
         const start = new Date(student.mess_detail.start_date)

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../style/LoginPage.css';
 import axios from 'axios';
-import { setAdminDetails } from '../actions/userDetails';
+import { setAdminDetails, setStudentDetails } from '../actions/userDetails';
 import { store } from '../store/configureStore';
 
 const apiUrl = "http://localhost:3000";
@@ -41,8 +41,8 @@ class LoginPage extends React.Component {
 
     getJWT = (userID, password) => {
         
-
-        axios.post(`${apiUrl}/${ this.state.loginTo === 'Admin' ? 'admin' : 'student'}/login`,{
+    if(this.state.loginTo === 'Admin'){
+        axios.post(`${apiUrl}/admin/login`,{
             userID,
             password
         }).then((res) => {
@@ -54,13 +54,8 @@ class LoginPage extends React.Component {
             }
 
             store.dispatch(setAdminDetails(data));
-            if(this.state.loginTo==='Admin'){
-                this.moveToAdmin();
-            }
-            else{
-                console.log('student Found');
-                this.moveToStudent(res.data.roll_number);
-            }
+            this.moveToAdmin();
+            
         }, () => {
             console.log('Admin not found');
             alert('userID and password do not match');
@@ -70,6 +65,33 @@ class LoginPage extends React.Component {
                 password: ''
             })
         })
+
+    }
+    else{
+        axios.post(`${apiUrl}/student/login`,{
+            roll_number: userID,
+            password
+        }).then((res) => {
+            const data = {
+                ...res.data.data,
+                token: res.data.token,
+            }
+
+            store.dispatch(setStudentDetails(data));
+            this.moveToStudent(data.roll_number);
+            
+        }, () => {
+            console.log('Student not found');
+            alert('userID and password do not match');
+            this.setState({
+                ...this.state,
+                userID: '',
+                password: ''
+            })
+        })
+
+    }
+
 
     }
 

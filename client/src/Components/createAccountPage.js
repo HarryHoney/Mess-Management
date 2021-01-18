@@ -135,7 +135,7 @@ class CreateAccountPage extends React.Component {
                 password: this.state.password,
                 last_checkin: ''
             }
-
+            console.log(data);
             axios.post(`${apiUrl}/admin/add_new_student`, data, {
                 headers : {
                     'Authorization' : this.props.userDetails.token

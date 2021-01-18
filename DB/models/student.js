@@ -35,7 +35,7 @@ const studentSchema = new Schema({
         trim: true
     },
     photo_buffer:{
-        type:Buffer
+        type:String
     },
     balance:{
         type:Number,

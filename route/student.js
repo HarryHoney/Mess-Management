@@ -23,7 +23,7 @@ router.post('/login',async (req,res)=>{
         const student = await Student.findByCredentials(req.body.roll_number,req.body.password)
         const token = await student.generateAuthToken()
         await student.save()
-        const data = await change_Balance(req.student)
+        const data = await change_Balance(student)
         res.status(200).send({data,token})
     }catch(e){
         res.status(400).send(e)
