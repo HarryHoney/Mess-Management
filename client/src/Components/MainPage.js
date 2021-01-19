@@ -137,20 +137,28 @@ class MainPage extends React.Component {
 
     componentDidMount(){
         console.log(this.props.userDetails);
+        console.log(this.props.userDetails.photo_buffer);
     }
 
     render(){
         return (
             <div className='mainPage'>
                 <div className='studentData'>
-                    <h3>User Name : {this.props.userDetails.name}</h3>
-                    <h3>Roll No. : {this.props.userDetails.userId}</h3>
-                    <h3>Room No. : {this.props.userDetails.roomNo}</h3>
-                    <h3>Hostel No. : 4</h3>
-                    <h3>Email : {this.props.userDetails.email}</h3>
-                    <h3>Balance : {this.props.userDetails.balance}</h3>
-
-                    <Link to='/' ><button>Log Out</button></Link>
+                    <div className="stuLeft">
+                        <h3>User Name : {this.props.userDetails.name}</h3>
+                        <h3>Roll No. : {this.props.userDetails.userId}</h3>
+                        <h3>Room No. : {this.props.userDetails.roomNo}</h3>
+                        <h3>Hostel No. : 4</h3>
+                        <h3>Email : {this.props.userDetails.email}</h3>
+                        <h3>Balance : {this.props.userDetails.balance}</h3>
+                        <Link to='/' ><button>Log Out</button></Link>
+                    </div>
+                    <div className="stuRight">
+                        <img 
+                            src={this.props.userDetails.photo_buffer}
+                            alt="profile"
+                        />
+                    </div>
                 </div>
                 <Records
                     record = {this.records}
