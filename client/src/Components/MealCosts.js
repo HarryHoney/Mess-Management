@@ -107,7 +107,9 @@ class MealCosts extends React.Component {
 
         const meals = this.props.mealCosts;
         if(meals.breakfast===0 && meals.lunch===0 && meals.dinner===0 ){
-            store.dispatch(startSetMeals(this.props.token));    
+            if(this.props.token){
+                store.dispatch(startSetMeals(this.props.token));    
+            }
         }
     }
 

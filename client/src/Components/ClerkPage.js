@@ -2,11 +2,14 @@ import '../style/clerkPage.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { setAdminDetails } from '../actions/userDetails';
+import { startSetMeals } from '../actions/mealCosts';
+import { store } from '../store/configureStore';
 import MealCosts from './MealCosts';
 import {changeBreakFast,changeLunch, changeDinner} from '../actions/mealCosts';
-
 //import database from '../firebase/firebase';
-
+const apiUrl = "http://localhost:3000";
 
 class ClerkPage extends React.Component { 
 
@@ -69,9 +72,25 @@ class ClerkPage extends React.Component {
         this.props.history.push('/');
     }
 
-    componentDidMount(){
-        // console.log(this.state.jwt);
-        //handle page refresh
+    async componentDidMount(){
+        if(!this.props.userDetails.token){
+            axios.get(`${apiUrl}/admin/me`,{
+                headers : {
+                    'Authorization' : this.state.jwt
+                }
+            }).then((res) => {
+
+                const data = {
+                    Name: res.data.Name,
+                    userID: res.data.userID,
+                    token: this.state.jwt
+                }
+
+                store.dispatch(setAdminDetails(data));
+                store.dispatch(startSetMeals(this.props.userDetails.token));
+            })
+        }
+        
     }
 
 

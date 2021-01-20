@@ -3,12 +3,19 @@ import React from 'react';
 import Records from './Records';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { setStudentDetails } from '../actions/userDetails';
+import { store } from '../store/configureStore';
+
 import moment from 'moment';
 import 'react-dates/initialize';
 import { DateRangePicker } from 'react-dates';
 import 'react-dates/lib/css/_datepicker.css';
 import database from '../firebase/firebase';
 var request = require('request');
+
+
+const apiUrl = "http://localhost:3000";
     
 
 class MainPage extends React.Component {
@@ -23,7 +30,8 @@ class MainPage extends React.Component {
      messOffB : "BreakFast",
      messOffE : "BreakFast",
      compTitle : "Food",
-     complaint : ""
+     complaint : "",
+     jwt : localStorage.getItem('studentToken') || null
  }
  
  records = [
@@ -140,8 +148,21 @@ class MainPage extends React.Component {
         this.props.history.push('/');
     }
 
-    componentDidMount(){
-        //handle page refresh
+    async componentDidMount(){
+        if(!this.props.userDetails.token){
+            axios.get(`${apiUrl}/student/me`,{
+                headers : {
+                    'Authorization' : this.state.jwt
+                }
+            }).then((res) => {
+               
+                const data = {
+                    ...res.data,
+                    token: this.state.jwt
+                }
+                store.dispatch(setStudentDetails(data));
+            })
+        }
     }
 
     render(){
