@@ -12,7 +12,7 @@ class LoginPage extends React.Component {
         userID : '',
         password : '',
         loginTo : 'Admin',
-        jwt : localStorage.getItem('token') || null,
+        jwt : null,
     }
 
     setPassword = (e) => {
@@ -54,6 +54,7 @@ class LoginPage extends React.Component {
             }
 
             store.dispatch(setAdminDetails(data));
+            localStorage.setItem('adminToken', data.token);
             this.moveToAdmin();
             
         }, () => {
@@ -78,6 +79,7 @@ class LoginPage extends React.Component {
             }
 
             store.dispatch(setStudentDetails(data));
+            localStorage.setItem('studentToken', data.token);
             this.moveToStudent(data.roll_number);
             
         }, () => {
@@ -108,7 +110,7 @@ class LoginPage extends React.Component {
         this.getJWT(this.state.userID, this.state.password);
     }
 
-    componentDidMount(){
+    async componentDidMount(){
         // axios.post(`${apiUrl}/admin/add_admin`,{
         //     Name : "Ashutosh",
         //     userID : 87654321,
@@ -119,6 +121,49 @@ class LoginPage extends React.Component {
         // }, () => {
         //     console.log('unable to add admin account');
         // })
+        var jwt = localStorage.getItem('adminToken');
+        
+        if(jwt){
+            axios.get(`${apiUrl}/admin/me`,{
+                headers : {
+                    'Authorization' : jwt
+                }
+            }).then((res) => {
+
+                const data = {
+                    Name: res.data.Name,
+                    userID: res.data.userID,
+                    token: jwt
+                }
+    
+                store.dispatch(setAdminDetails(data));
+                this.moveToAdmin();
+            })
+        }
+        else{
+            jwt = localStorage.getItem('studentToken');
+            
+            if(jwt){
+                axios.get(`${apiUrl}/student/me`,{
+                    headers : {
+                        'Authorization' : jwt
+                    }
+                }).then((res) => {
+                   
+                    const data = {
+                        ...res.data,
+                        token: jwt
+                    }
+        
+                    store.dispatch(setStudentDetails(data));
+                    this.moveToStudent(data.roll_number);
+                })
+            }
+        }
+
+
+        
+
     }
 
     render(){

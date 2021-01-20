@@ -135,9 +135,13 @@ class MainPage extends React.Component {
         })
     }
 
+    handleLogOut = () => {
+        localStorage.removeItem('studentToken');
+        this.props.history.push('/');
+    }
+
     componentDidMount(){
-        console.log(this.props.userDetails);
-        console.log(this.props.userDetails.photo_buffer);
+        //handle page refresh
     }
 
     render(){
@@ -151,7 +155,7 @@ class MainPage extends React.Component {
                         <h3>Hostel No. : 4</h3>
                         <h3>Email : {this.props.userDetails.email}</h3>
                         <h3>Balance : {this.props.userDetails.balance}</h3>
-                        <Link to='/' ><button>Log Out</button></Link>
+                        <button onClick={this.handleLogOut}>Log Out</button>
                     </div>
                     <div className="stuRight">
                         <img 

@@ -14,7 +14,7 @@ class ClerkPage extends React.Component {
         rNo : "",
         details : "",
         charges : "",
-        jwt : localStorage.getItem('token') || null,
+        jwt : localStorage.getItem('adminToken') || null,
     }
 
     changeRNo = (e) => {
@@ -65,12 +65,15 @@ class ClerkPage extends React.Component {
     }
 
     handleLogOut = () => {
+        localStorage.removeItem('adminToken');
         this.props.history.push('/');
     }
 
     componentDidMount(){
-
+        // console.log(this.state.jwt);
+        //handle page refresh
     }
+
 
     render(){
         return(
