@@ -72,6 +72,24 @@ const studentSchema = new Schema({
     last_checkin:{
         type:String,
         required : true
+    },
+    history:{
+        extra_history:[{
+            description:{
+                type:String
+            },
+            cost:{
+                type:Number
+            }
+        }],
+        mess_history:[{
+            start_date:{
+                type:String 
+            },
+            end_date:{
+                type:String 
+            }
+        }]
     }
 })
 

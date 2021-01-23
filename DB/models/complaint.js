@@ -7,7 +7,7 @@ const complaintSchema = new Schema({
         required: true
     },
     Status:{
-        type:Boolean
+        type:Number
     },
     Detail:{
         type:String

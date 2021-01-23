@@ -18,14 +18,11 @@ route.post('/add_new_student', admin_verification,async (req, res) => {
     try {
 
         data.last_checkin = 'Fri Jan 01 2021'
-        // if(data.photo_buffer != null)
-        // {
-        //     //ashu will make sure that the user will select image file only
-        //     buffer = await getBuffer(data.photo_buffer)
-        //     data.photo_buffer = buffer
-        // }
         const student = new Student(data)
         const token = await student.generateAuthToken()
+        student.history = {}
+        student.history.extra_history = []
+        student.history.mess_history = []
         await student.save()
         // mailer.sendwecomeEmail(data.email,data.name)
         
@@ -99,6 +96,55 @@ route.post('/login',async (req,res)=>{
     {
         res.status(401).json(e)
     }
+})
+
+route.get('/students_off',admin_verification,async(req,res)=>{
+
+    try{
+        let now = new Date
+        const data = await Student.find()
+        let student_list = []
+        data.forEach((curr_student)=>{
+            if(curr_student.mess_detail.start_date !== undefined)
+            {
+
+                const left = new Date(curr_student.mess_detail.start_date)
+                const right = new Date(curr_student.mess_detail.end_date)
+                if(left<=now && right>=now){
+                    student_list.concat(curr_student)
+                }
+            }
+        })
+        res.status(201).json(
+            {
+                "Status":"Successful",
+                "list":student_list
+            })
+    }
+    catch(e){
+        res.status(401).send(e)
+    }
+
+})
+
+route.post('/impose_charges',admin_verification,async(req,res)=>{
+
+    const description = req.body.description
+    const cost = req.body.cost
+    const roll_number = req.body.roll_number
+    try
+    {
+        let data = await Student.findOne({roll_number:roll_number})
+        data.balance = data.balance - cost
+        data.history.extra_history = data.history.extra_history.concat({"description":description,"cost":cost})
+        await data.save()
+        res.send({"Status":"Successfull"});
+    }
+    catch(e)
+    {
+        res.status(401).send(e)
+    }
+
 })
 
 route.get('/logout',admin_verification,async (req,res)=>{

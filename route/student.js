@@ -67,6 +67,10 @@ router.post('/mess_off', auth_verification,async (req,res)=>{
         {
             student.mess_detail.start_date = req.body.start_date
             student.mess_detail.end_date = req.body.end_date
+            student.history.mess_history = student.history.mess_history.concat({
+                "start_date":req.body.start_date,
+                "end_date":req.body.end_date
+            })
             await student.save()
             res.status(201).send({
                 Status : 'Successful'
@@ -77,6 +81,10 @@ router.post('/mess_off', auth_verification,async (req,res)=>{
             if(d1 < Date.now()){
                 student.mess_detail.start_date = req.body.start_date
                 student.mess_detail.end_date = req.body.end_date
+                student.history.mess_history = student.history.mess_history.concat({
+                    "start_date":req.body.start_date,
+                    "end_date":req.body.end_date
+                })
                 await student.save()
                 res.status(201).send({
                     Status : 'Successful'
